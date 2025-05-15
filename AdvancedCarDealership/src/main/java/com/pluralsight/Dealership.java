@@ -41,15 +41,17 @@ public class Dealership {
         this.phoneNumber = phoneNumber;
     }
     
-    public List<Vehicle> getVehicleByVIN(int vin){
-        List<Vehicle> filteredVehicles = new ArrayList<>();
+    public Vehicle getVehicleByVIN(int vin){
+       // List<Vehicle> filteredVehicles = new ArrayList<>();
         
         for(Vehicle vehicle : inventory){
             if(vehicle.getVin() == vin){
-                filteredVehicles.add(vehicle);
+                return vehicle;
+               // filteredVehicles.add(vehicle);
             }
         }
-        return filteredVehicles;
+       // return filteredVehicles;
+        return null;
     }
     
     public List<Vehicle> getVehiclesByPrice(double min, double max){

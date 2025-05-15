@@ -1,15 +1,15 @@
 package com.pluralsight;
 
+@SuppressWarnings("ALL")
 public class SalesContract extends Contract{
     private double salesTax; // total price * .5
-    private double recordingFee = 100;
+    private double recordingFee; // 100
     private double processingFee;
-    private boolean finance = false;
+    private boolean finance;
     
     
-    public SalesContract(String date, String customerName, String customerEmail, Vehicle vehicleSold, double totalPrice
-            , double monthlyPayment, double salesTax, double recordingFee, double processingFee, boolean finance) {
-        super(date, customerName, customerEmail, vehicleSold, totalPrice, monthlyPayment);
+    public SalesContract(String date, String customerName, String customerEmail, Vehicle vehicleSold, double salesTax, double recordingFee, double processingFee, boolean finance) {
+        super(date, customerName, customerEmail, vehicleSold);
         this.salesTax = salesTax;
         this.recordingFee = recordingFee;
         this.processingFee = processingFee;
@@ -28,7 +28,10 @@ public class SalesContract extends Contract{
     }
     
     public double getRecordingFee() {
-        return recordingFee;
+        if(this.recordingFee == 0){
+            this.recordingFee = 100;
+        }
+        return this.recordingFee;
     }
     
     public void setRecordingFee(double recordingFee) {
@@ -54,16 +57,20 @@ public class SalesContract extends Contract{
     @Override
     public double getTotalPrice(Vehicle vehicleSold) {
         if(vehicleSold.getPrice() < 10000){
-            processingFee = 295;
+            if(processingFee == 0) {
+                processingFee = 295;
+            }
         } else{
-            processingFee = 495;
+            if(processingFee == 0) {
+                processingFee = 495;
+            }
         }
-        return vehicleSold.getPrice() + + getSalesTax() + getRecordingFee() + getProcessingFee();
+        return vehicleSold.getPrice() + getSalesTax() + getRecordingFee() + getProcessingFee();
     }
     
     @Override
-    public double getMonthlyPayment(Vehicle vehicleSold) { // how do I get the monthly payment variable to 0 for a
-        
+    public double getMonthlyPayment(Vehicle vehicleSold) {
+        // how do I get the monthly payment variable to 0 for a
         // NO loan option?
         if(!finance){
             if(vehicleSold.getPrice() >= 10000){

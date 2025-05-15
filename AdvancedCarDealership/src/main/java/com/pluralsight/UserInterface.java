@@ -1,15 +1,22 @@
 package com.pluralsight;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import static com.pluralsight.ColorCodes.BLACK_BACKGROUND;
+import static com.pluralsight.ColorCodes.RESET;
+import static com.pluralsight.ColorCodes.YELLOW;
 import static com.pluralsight.StyledUI.styledHeader;
 
+@SuppressWarnings("ALL")
 public class UserInterface {
     private Dealership dealership;
     public DealershipFileManager fileManager = new DealershipFileManager();
+    public ContractDataManager dataManager = new ContractDataManager();
     private final Console console = new Console();
     private final Scanner scanner = new Scanner(System.in);
 
@@ -39,6 +46,7 @@ public class UserInterface {
         // will include accepting user input within this method
         int input = 0;
         while(input != -1) {
+            printDealershipInfo(this.dealership);
             styledHeader("Welcome to the Dealership!");
             String welcomeMenuPrompt ="""
                     [1] Search by Price
@@ -84,6 +92,12 @@ public class UserInterface {
                 case 9:
                     processRemoveVehicleRequest();
                     break;
+                case 10:
+                    processSalesContract();
+                    break;
+                case 11:
+                    processLeaseContract();
+                    break;
                 default:
                     System.out.println("Please make a selection from the menu");
             }
@@ -96,7 +110,13 @@ public class UserInterface {
         // this method should have a parameter that is passed in containing the vehicles to list
         // within the method, create a loop and display the vehicles
         // format this to display more aesthetically for the user
-        fileManager.printVehicleInventory(vehicles);
+        printVehicleInventory(vehicles);
+    }
+
+    private void displayVehicle(Vehicle vehicle){
+        ArrayList<Vehicle> v = new ArrayList<>();
+        v.add(vehicle);
+        displayVehicle(v);
     }
     
     private void processGetByPriceRequest() {
@@ -289,15 +309,113 @@ public class UserInterface {
     private void processRemoveVehicleRequest() {
         // get a vehicle to remove from the List<Vehicle> inventory - in the Dealership class
         System.out.println(StyledUI.styledBoxTitle("Remove a Vehicle from Dealership lot"));
-        fileManager.printVehicleInventory(dealership.inventory);
+        printVehicleInventory(dealership.inventory);
         
         int vin = console.promptForInt("Please enter the vin number of the vehicle you want to remove: ");
         
-        List<Vehicle> vehicleVin = dealership.getVehicleByVIN(vin);
-        for(Vehicle v : vehicleVin){
-            dealership.removeVehicle(v);
-        }
+        Vehicle removedVehicle = dealership.getVehicleByVIN(vin);
+            dealership.removeVehicle(removedVehicle);
         System.out.println("This vehicle was removed: ");
-        displayVehicle(vehicleVin);
+        displayVehicle(removedVehicle);
     }
+
+    private void processSalesContract(){
+        // user selects to buy a vehicle
+        // users need a list of vehicle to buy from
+        printVehicleInventory(dealership.inventory);
+
+            // create loop for potential InputErrorMismatch
+        int vin;
+        while(true) {
+            vin = console.promptForInt("Please enter the vin number of the vehicle you want to buy: ");
+
+            if (vin >= 11111 && vin <= 99999){
+                break;
+            } else{
+                System.out.println("Invalid VIN. Please try again.");
+            }
+        }
+
+            Vehicle vehicleForSale = dealership.getVehicleByVIN(vin);
+
+        System.out.println("This vehicle was chosen for sale: " );
+        displayVehicle(vehicleForSale);
+
+        LocalDate now = LocalDate.now();
+        String date = String.valueOf(now);
+        String customerName = console.promptForString("Please enter your full name: ");
+        String customerEmail = console.promptForString("Please enter your email address: ");
+        String finance = console.promptForString("Would you like to finance your vehicle purchase? Y/N ");
+
+        boolean isFinanced = false;
+        if(finance.equalsIgnoreCase("Y")){
+            isFinanced = true;
+        }
+        double salesTax = 0;
+        double recordingFee = 0;
+        double processingFee = 0;
+
+        // need to instantiate the correct type of contract and send it to ContractDataManager
+        // when instantiating an object of the correct type, we need the data that is going to be passed
+        // into the constructor
+        SalesContract vehicleSale = new SalesContract(date, customerName, customerEmail, vehicleForSale,
+                salesTax, recordingFee, processingFee, isFinanced);
+
+        // save contract to contract csv
+        try {
+            dataManager.saveContract(vehicleSale);
+            System.out.println("You have successfully created a Sales Contract!");
+        } catch (IOException e) {
+            System.out.println("Could not save this contract");
+            throw new RuntimeException(e);
+        }
+        // remove the vehicle from inventory
+        dealership.removeVehicle(vehicleForSale);
+    }
+
+    private void processLeaseContract(){
+
+    }
+
+    public void printDealershipInfo(Dealership dealership) {
+        String name = dealership.getName();
+        String address = dealership.getAddress();
+        String phone = dealership.getPhoneNumber();
+
+        String border = "=".repeat(60);
+
+        System.out.println(border);
+        // Each line is exactly 60 characters wide with formatting and background applied to the entire line
+        System.out.print(BLACK_BACKGROUND + YELLOW);
+        System.out.printf("  DEALERSHIP: %-47s", name);
+        System.out.println(RESET);
+
+        System.out.print(BLACK_BACKGROUND + YELLOW);
+        System.out.printf("  Address:    %-47s", address);
+        System.out.println(RESET);
+
+        System.out.print(BLACK_BACKGROUND + YELLOW);
+        System.out.printf("  Phone:      %-47s", phone);
+        System.out.println(RESET);
+
+        System.out.println(border);
+    }
+
+    public void printVehicleInventory(List<Vehicle> vehicles) {
+        if (vehicles == null || vehicles.isEmpty()) {
+            System.out.println("No vehicles in inventory \n");
+            return;
+        }
+
+        // Print styled header
+        System.out.println(StyledUI.FormattedTextHeader());
+
+        // Print each vehicle using the Vehicle's toFormattedRow() method
+        for (Vehicle v : vehicles) {
+            System.out.println(v.toFormattedRow());
+        }
+
+        System.out.println(); // Optional spacing after the table
+    }
+
 }

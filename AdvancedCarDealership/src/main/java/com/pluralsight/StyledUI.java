@@ -5,9 +5,9 @@ import static com.pluralsight.ColorCodes.*;
 public class StyledUI {
     
     public static void styledHeader(String header){
-        String line = BLUE + "=".repeat(header.length() + 10) + RESET;
+        String line = "=".repeat(header.length() + 10);
         System.out.println(line);
-        System.out.printf(GREEN_BACKGROUND + "     %s%n", header + "     " + RESET);
+        System.out.printf(BLACK_BACKGROUND + CYAN + "     %s%n", header + "     " + RESET);
         System.out.println(line);
     }
     

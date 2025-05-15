@@ -2,7 +2,6 @@ package com.pluralsight;
 
 import java.io.*;
 import java.util.List;
-
 import static com.pluralsight.ColorCodes.*;
 
 public class DealershipFileManager {
@@ -46,7 +45,7 @@ public class DealershipFileManager {
                 }
             }
             // after parsing the details, we return the new Dealership object
-            return printDealershipInfo(dealership);
+            return dealership;
             
         } catch (IOException e) {
             System.out.println("Could not read from file!");
@@ -100,47 +99,5 @@ public class DealershipFileManager {
         } catch(IOException e){
             System.out.println("There was an error saving information to file");
         }
-    }
-    
-    public static Dealership printDealershipInfo(Dealership dealership) {
-        String name = dealership.getName();
-        String address = dealership.getAddress();
-        String phone = dealership.getPhoneNumber();
-        
-        String border = "=".repeat(60);
-        
-        System.out.println(border);
-        // Each line is exactly 60 characters wide with formatting and background applied to the entire line
-        System.out.print(BLACK_BACKGROUND + YELLOW);
-        System.out.printf("  DEALERSHIP: %-47s", name);
-        System.out.println(RESET);
-        
-        System.out.print(BLACK_BACKGROUND + YELLOW);
-        System.out.printf("  Address:    %-47s", address);
-        System.out.println(RESET);
-        
-        System.out.print(BLACK_BACKGROUND + YELLOW);
-        System.out.printf("  Phone:      %-47s", phone);
-        System.out.println(RESET);
-        
-        System.out.println(border);
-        return dealership;
-    }
-    
-    public void printVehicleInventory(List<Vehicle> vehicles) {
-        if (vehicles == null || vehicles.isEmpty()) {
-            System.out.println("No vehicles in inventory \n");
-            return;
-        }
-        
-        // Print styled header
-        System.out.println(StyledUI.FormattedTextHeader());
-        
-        // Print each vehicle using the Vehicle's toFormattedRow() method
-        for (Vehicle v : vehicles) {
-            System.out.println(v.toFormattedRow());
-        }
-        
-        System.out.println(); // Optional spacing after the table
     }
 }
