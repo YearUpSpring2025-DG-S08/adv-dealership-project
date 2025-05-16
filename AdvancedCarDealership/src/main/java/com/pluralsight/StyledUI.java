@@ -12,7 +12,7 @@ public class StyledUI {
     }
     
     public static String FormattedTextHeader(){
-        String header = String.format("%-10s | %-8s | %-20s | %-10s | %-8s | %-8s | %-12s | %-12s"
+        String header = String.format("%-6s | %-6s | %-12s | %-14s | %-12s | %-10s | %10s | %12s"
                 ,"VIN" ,"YEAR" ,"MAKE" ,"MODEL" ,"TYPE" ,"COLOR" ,"MILEAGE" ,"PRICE ($)");
         
         String border = "+" + "-".repeat(header.length() + 2) + "+";

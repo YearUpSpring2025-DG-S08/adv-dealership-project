@@ -1,13 +1,15 @@
 package com.pluralsight;
 
 public abstract class Contract {
+    // instance variables
     private String Date;
     private String customerName;
     private String customerEmail;
     private Vehicle vehicleSold;
     private double totalPrice;
     private double monthlyPayment;
-    
+
+    // constructor
     public Contract(String date, String customerName, String customerEmail, Vehicle vehicleSold) {
         Date = date;
         this.customerName = customerName;
@@ -16,7 +18,8 @@ public abstract class Contract {
         this.totalPrice = totalPrice;
         this.monthlyPayment = monthlyPayment;
     }
-    
+
+    // getters & setters
     public String getDate() {
         return Date;
     }
@@ -48,7 +51,8 @@ public abstract class Contract {
     public void setVehicleSold(Vehicle vehicleSold) {
         this.vehicleSold = vehicleSold;
     }
-    
+
+    // derived methods
     public abstract double getTotalPrice(Vehicle vehicleSold);
     
     public abstract double getMonthlyPayment(Vehicle vehicleSold);

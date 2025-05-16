@@ -6,7 +6,8 @@ import static com.pluralsight.ColorCodes.*;
 
 public class DealershipFileManager {
     private static final String filePath = "inventory.csv";
-    
+
+    // load file method
     public Dealership getDealership() {
         // get dealership details from csv file
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -71,7 +72,8 @@ public class DealershipFileManager {
             return null;
         }
     }
-    
+
+    // file modifier method
     public void saveDealership(Dealership dealership){
     // for every add or removal of a vehicle
     // this method will be called to save this new information to the csv file

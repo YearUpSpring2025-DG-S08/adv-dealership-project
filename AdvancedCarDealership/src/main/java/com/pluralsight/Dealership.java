@@ -3,20 +3,23 @@ package com.pluralsight;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("ALL")
 public class Dealership {
+    // instance variables
     private String name;
     private String address;
     private String phoneNumber;
     private final DealershipFileManager fileManager = new DealershipFileManager();
     public List<Vehicle> inventory = new ArrayList<>();
     
-    
+    // constructor
     public Dealership(String name, String address, String phoneNumber) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
     }
 
+    // getters & setters
     public String getName() {
         return name;
     }
@@ -40,7 +43,8 @@ public class Dealership {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-    
+
+    // helper method
     public Vehicle getVehicleByVIN(int vin){
        // List<Vehicle> filteredVehicles = new ArrayList<>();
         
@@ -53,7 +57,8 @@ public class Dealership {
        // return filteredVehicles;
         return null;
     }
-    
+
+    // user menu option filtering methods
     public List<Vehicle> getVehiclesByPrice(double min, double max){
         List<Vehicle> filteredVehicles = new ArrayList<>();
         
@@ -135,7 +140,8 @@ public class Dealership {
         
         return inventory;
     }
-    
+
+    // file modifier methods
     public void addVehicle(Vehicle vehicle) {
         //add this vehicle to the inventory of this dealership
         inventory.add(vehicle);

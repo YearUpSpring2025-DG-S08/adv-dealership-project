@@ -1,5 +1,6 @@
 package com.pluralsight;
 
+@SuppressWarnings("ALL")
 public class LeaseContract extends Contract{
     
     private double endingValue;
@@ -34,7 +35,7 @@ public class LeaseContract extends Contract{
     
     public double getLeaseFee(){
         if(this.leaseFee == 0){
-            this.leaseFee = (getVehicleSold().getPrice() * .07) + getVehicleSold().getPrice();
+            this.leaseFee = getVehicleSold().getPrice() * .07;
         }
         return this.leaseFee;
     }
@@ -47,12 +48,46 @@ public class LeaseContract extends Contract{
     
     @Override
     public double getMonthlyPayment(Vehicle vehicleSold) {
-        double principalAmount = getVehicleSold().getPrice();
-        double interestRate = 0.04 /12;
+        double principalAmount = vehicleSold.getPrice();
+        double interestRate = 0.04;
         int loanLength = 36;
         
         return principalAmount * (interestRate * Math.pow(1 + interestRate, 12 * loanLength)
                 / (Math.pow(1 + interestRate, 12 * loanLength) - 1));
         
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                """
+                        Lease Contract Details:
+                        --------------------
+                        Date: %s
+                        Customer: %s
+                        Email: %s
+                        Vehicle: %s
+                        Total Price: $%.2f
+                        Monthly Payment: $%.2f
+                        End of Lease Value: $%.2f
+                        Lease Fee: $%.2f""",
+                super.getDate(),
+                super.getCustomerName(),
+                super.getCustomerEmail(),
+                vehicleDetails(),  // You'll need to create this helper method
+                getTotalPrice(super.getVehicleSold()),
+                getMonthlyPayment(super.getVehicleSold()),
+                getEndingValue(),
+                getLeaseFee());
+    }
+
+    // Helper method to format vehicle details
+    private String vehicleDetails() {
+        Vehicle v = super.getVehicleSold();
+        if (v == null) return "N/A";
+        return String.format("VIN: %d | YEAR: %d | MAKE: %s | MODEL: %s " +
+                        "| VEHICLE TYPE: %s | COLOR: %s | MILEAGE: %.0f | PRICE: $%.2f"
+                ,v.getVin(), v.getYear(), v.getMake(), v.getModel(), v.getType()
+                ,v.getColor(), v.getMileage(), v.getPrice());
     }
 }

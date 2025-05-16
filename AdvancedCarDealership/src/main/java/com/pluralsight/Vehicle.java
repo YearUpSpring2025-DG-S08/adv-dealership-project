@@ -1,6 +1,8 @@
 package com.pluralsight;
 
+@SuppressWarnings("ALL")
 public class Vehicle {
+    // instance variables
     private int vin;
     private int year;
     private String make;
@@ -10,6 +12,7 @@ public class Vehicle {
     private double mileage;
     private double price;
 
+    // constructor
     public Vehicle(int vin, int year, String make, String model, String type, String color, double mileage,
                    double price) {
         this.vin = vin;
@@ -22,6 +25,7 @@ public class Vehicle {
         this.price = price;
     }
 
+    // getters & setters
     public int getVin() {
         return vin;
     }
@@ -86,13 +90,12 @@ public class Vehicle {
         this.type = type;
     }
 
-//     create a formatted print of vehicle information 
+    // display methods
     @Override
     public String toString() {
-        String header = StyledUI.FormattedTextHeader();
-        String data = String.format("%d|%s|%s|%s|%s|%s|%.0f|$%.0f"
+        String data = String.format("%d|%s|%s|%s|%s|%s|%.0f|%.0f"
                 , vin, year, make, model, type, color, mileage, price);
-        return header + "\n" + data + "\n";
+        return data;
     }
     
     public String toFormattedRow() {

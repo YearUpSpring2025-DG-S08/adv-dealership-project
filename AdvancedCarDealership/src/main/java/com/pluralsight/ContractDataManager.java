@@ -4,36 +4,70 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+@SuppressWarnings("IfCanBeSwitch")
 public class ContractDataManager {
     private static final String filepath = "contracts.csv";
     
-    public void saveContract(Contract contract) throws IOException {
-        if(contract instanceof SalesContract) {
-            
-            PrintWriter salesWriter = new PrintWriter(new FileWriter(filepath, true));
+    public void saveContract(Contract contract){
 
-//            Contract file header - where can I put this to safely print without adding this line to the file?
-//            salesWriter.printf("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s\n",
-//                    "Contract Type", "Date of Contract", "Customer Name", "Customer Email",
-//                    "Vehicle Sold", "Contract Price", "Monthly Payment", "Sales Tax", "Recording Fee",
-//                    "Processing Fee", "Finance Option");
+        // error handling for possible null file
+        if(contract == null){
+            throw new IllegalArgumentException("Contract file cannot be null");
+        }
+
+        if(contract instanceof SalesContract) {
+
+            try (PrintWriter salesWriter = new PrintWriter(new FileWriter(filepath, true))) {
+
+                // error handling for possible null properties
+                String date = contract.getDate() != null ? contract.getDate() : "N/A";
+                String customerName = contract.getCustomerName() != null ? contract.getCustomerName() : "N/A";
+                String customerEmail = contract.getCustomerEmail() != null ? contract.getCustomerEmail() : "N/A";
+                Vehicle vehicleSold = contract.getVehicleSold() != null ? contract.getVehicleSold() : null;
+
+                // checks if vehicle is null before attempting to calculate price and monthly payment
+                double totalPrice = contract.getVehicleSold() != null ? contract.getTotalPrice(contract.getVehicleSold()) : 0;
+                double monthlyPayment = contract.getVehicleSold() != null ? contract.getMonthlyPayment(contract.getVehicleSold()) : 0;
 
             salesWriter.printf("%s|%s|%s|%s|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%b\n"
-                , "SALE", contract.getDate(), contract.getCustomerName(), contract.getCustomerEmail()
-                , contract.getVehicleSold(), contract.getTotalPrice(contract.getVehicleSold())
-                , contract.getMonthlyPayment(contract.getVehicleSold()), ((SalesContract) contract).getSalesTax()
-                , ((SalesContract) contract).getRecordingFee(), ((SalesContract) contract).getProcessingFee()
-                , ((SalesContract) contract).isFinance());
+                    , "SALE", date, customerName, customerEmail, vehicleSold, totalPrice, monthlyPayment
+                    , ((SalesContract) contract).getSalesTax()
+                    , ((SalesContract) contract).getRecordingFee()
+                    , ((SalesContract) contract).getProcessingFee()
+                    , ((SalesContract) contract).isFinanced());
+
+            } catch(IOException e){
+                System.out.println("Could not write to file");
+            }
         }
         else if(contract instanceof LeaseContract){
-            
-            PrintWriter leaseWriter = new PrintWriter(new FileWriter(filepath, true));
-            
-            leaseWriter.printf("\n%s|%s|%s|%s|%s|%.2f|%.2f|%.2f|%.2f"
-                , "LEASE", contract.getDate(), contract.getCustomerName(), contract.getCustomerEmail()
-                , contract.getVehicleSold(), contract.getTotalPrice(contract.getVehicleSold())
-                , contract.getMonthlyPayment(contract.getVehicleSold()), ((LeaseContract) contract).getEndingValue()
-                , ((LeaseContract) contract).getLeaseFee());
+
+
+            try (PrintWriter leaseWriter = new PrintWriter(new FileWriter(filepath, true))) {
+
+                // error handling for possible null properties
+                String date = contract.getDate() != null ? contract.getDate() : "N/A";
+                String customerName = contract.getCustomerName() != null ? contract.getCustomerName() : "N/A";
+                String customerEmail = contract.getCustomerEmail() != null ? contract.getCustomerEmail() : "N/A";
+                Vehicle vehicleSold = contract.getVehicleSold() != null ? contract.getVehicleSold() : null;
+
+                // checks if vehicle is null before attempting to calculate price and monthly payment
+                double totalPrice = contract.getVehicleSold() != null ? contract.getTotalPrice(contract.getVehicleSold()) : 0;
+                double monthlyPayment = contract.getVehicleSold() != null ? contract.getMonthlyPayment(contract.getVehicleSold()) : 0;
+
+                leaseWriter.printf("%s|%s|%s|%s|%s|%.2f|%.2f|%.2f|%.2f\n"
+                    , "LEASE", date, customerName, customerEmail, vehicleSold, totalPrice, monthlyPayment
+                    , ((LeaseContract) contract).getEndingValue()
+                    , ((LeaseContract) contract).getLeaseFee());
+
+            }
+            catch(IOException e){
+                System.out.println("Could not write to file");
+            }
+        } else{
+            // if both instances do not run, then there is an Illegal Argument being passed
+            // the error message will allow us to know what is being passed
+            throw new IllegalArgumentException("Unknown contract type: " + contract.getClass().getName());
         }
     }
 }
